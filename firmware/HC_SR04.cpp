@@ -4,6 +4,7 @@ HC_SR04::HC_SR04(int trigPin, int echoPin){
   _maxCM = 250.0;
   _trigPin = trigPin;
   _echoPin = echoPin;
+  _timeout = 100;
   pinMode(_trigPin, OUTPUT);
   pinMode(_echoPin, INPUT);
 }
@@ -13,15 +14,26 @@ HC_SR04::HC_SR04(int trigPin, int echoPin, double minCM, double maxCM){
   _maxCM = maxCM;
   _trigPin = trigPin;
   _echoPin = echoPin;
+  _timeout = 100;
+  pinMode(_trigPin, OUTPUT);
+  pinMode(_echoPin, INPUT);
+}
+
+HC_SR04::HC_SR04(int trigPin, int echoPin, double minCM, double maxCM, long timeout){
+  _minCM = minCM;
+  _maxCM = maxCM;
+  _trigPin = trigPin;
+  _echoPin = echoPin;
+  _timeout = timeout;
   pinMode(_trigPin, OUTPUT);
   pinMode(_echoPin, INPUT);
 }
 
 double HC_SR04::getDistanceCM(){
   sendTriggerPulse(_trigPin);
-  waitForEcho(_echoPin, HIGH, 100);
+  waitForEcho(_echoPin, HIGH, _timeout);
   long startTime = micros();
-  waitForEcho(_echoPin, LOW, 100);
+  waitForEcho(_echoPin, LOW, _timeout);
   long endTime = micros();
   long duration = endTime - startTime;
   double distance = duration / 29.0 / 2.0;
